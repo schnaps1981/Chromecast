@@ -50,16 +50,9 @@ playerManager.setMessageInterceptor(
             }
             // DRM
             if (request.media.customData.mediaItem.drmConfiguration.licenseUri){
-                //if (request.media.customData.licenseUrl) {
                 playerManager.setMediaPlaybackInfoHandler((loadRequest, playbackConfig) => {
                     playbackConfig.protectionSystem = cast.framework.ContentProtection.WIDEVINE;
                     playbackConfig.licenseUrl = request.media.customData.mediaItem.drmConfiguration.licenseUri;
-                    /*
-                      playbackConfig.licenseRequestHandler = requestInfo => {
-                      requestInfo.withCredentials = false;
-                          requestInfo.headers = request.media.customData.licenseHeaders;
-                      };
-                  */
                     return playbackConfig;
                 });
             }
