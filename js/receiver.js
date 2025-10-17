@@ -15,6 +15,34 @@ context.addEventListener(cast.framework.system.EventType.READY, () => {
     }
 });
 
+const LOG_TAG = 'MyReceiverApp';
+
+playerManager.setMessageInterceptor(
+    cast.framework.messages.MessageType.LOAD,
+    request => {
+        castDebugLogger.debug(LOG_TAG, 'Intercepting LOAD request');
+
+        return new Promise((resolve, reject) => {
+            fetchMediaAsset(request.media.contentId).then(
+                data => {
+                    let item = data[request.media.contentId];
+                    if (!item) {
+                        castDebugLogger.error(LOG_TAG, 'Content not found');
+
+                        reject();
+                    } else {
+                        request.media.contentUrl = item.stream.hls;
+                        castDebugLogger.info(LOG_TAG,
+                            'Playable URL:', request.media.contentUrl);
+
+                        resolve(request);
+                    }
+                }
+            );
+        });
+    }
+);
+
 // send signal to local player that the current stream has finished
 playerManager.addEventListener(
     cast.framework.events.EventType.MEDIA_FINISHED,
